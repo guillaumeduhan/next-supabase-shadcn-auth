@@ -57,6 +57,7 @@ function AppWrapper({ children }: {
 
   if (loading) return <p>Loading...</p>
 
+  if (!user) return <div>404 or redirect</div>
 
   return (
     <AppContext.Provider value={{

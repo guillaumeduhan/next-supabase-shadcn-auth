@@ -1,8 +1,5 @@
-import { AuthButton } from "@/components/auth-button";
 
 const Page = () => {
-  return <div>
-    <AuthButton />
-  </div>
+  return <div>Main page</div>
 }
 export default Page

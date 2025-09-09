@@ -1,0 +1,29 @@
+# .editorconfig
+root = true
+
+[*]
+indent_style = space
+indent_size = 1
+tab_width = 1
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+# Keep Markdown hard line-breaks (two trailing spaces)
+[*.md]
+trim_trailing_whitespace = false
+
+# YAML (2 spaces is standard)
+[*.{yml,yaml}]
+indent_size = 2
+
+# JSON / JSONC
+[*.{json,jsonc}]
+indent_size = 2
+
+# Makefiles must use tabs
+[Makefile]
+indent_style = tab
+indent_size = 4
+tab_width = 4

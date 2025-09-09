@@ -1,18 +1,22 @@
-import Link from "next/link";
-import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 import { LogoutButton } from "./logout-button";
+import { Button } from "./ui/button";
+import { User } from "./User";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function AuthButton() {
   const supabase = await createClient();
 
   const {
-    data: { user },
+    data: { user }, // can we watch for user if change and update the view ifso?
   } = await supabase.auth.getUser();
 
   return user ? (
     <div className="flex items-center gap-4">
-      Hey, {user.email}!
+      <User {...user} align="right" />
       <LogoutButton />
     </div>
   ) : (
