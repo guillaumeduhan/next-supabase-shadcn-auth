@@ -15,6 +15,8 @@ A modern authentication starter built with **Next.js 15**, **Supabase**, and **S
 
 ---
 
+![Next Supa Shadcn Template](https://repository-images.githubusercontent.com/1052965512/f74b11e4-ea9d-422d-8573-b50a65de5c5d)
+
 ## 📁 Project Structure
 ```
 ├── app/
@@ -42,7 +44,7 @@ A modern authentication starter built with **Next.js 15**, **Supabase**, and **S
 └── tailwind.config.js
 ```
 
----
+![Next Supa Shadcn Template](https://pbs.twimg.com/media/G1HygYAWgAEPx20?format=jpg&name=4096x4096)
 
 ## 🚀 Getting Started
 
