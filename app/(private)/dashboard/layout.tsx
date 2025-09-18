@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import type { Metadata } from "next";
-import AppWrapper from "./context";
+import { Toaster } from "sonner";
+import AppWrapper from "../context";
 
 export const metadata: Metadata = {
   title: "Next-Supabase-Shadcn template by Guillaume Duhan",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <AppWrapper>
       <Header />
       {children}
+      <Toaster richColors />
     </AppWrapper>
   );
 }
