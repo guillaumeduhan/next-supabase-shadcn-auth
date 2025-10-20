@@ -1,41 +1,47 @@
 'use client';
-import { LoginForm } from '@/components/login-form';
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 
+import Loading from '@/components/Loading';
 import { supabase } from '@/lib/supabase/client';
-import { createContext, useContext, useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+import { redirect } from 'next/navigation';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-const AppContext = createContext<any>(undefined);
+interface AppContextType {
+  user: User | null;
+  saveUser: (data: Partial<User['user_metadata']> & { email?: string }) => Promise<void>;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
 
-function AppWrapper({ children }: {
-  children: React.ReactNode
-}) {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+const AppContext = createContext<AppContextType | undefined>(undefined);
 
-  const saveUser = async (d: any) => {
+function AppWrapper({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const saveUser = async (data: Partial<User['user_metadata']> & { email?: string }) => {
     if (!user) return;
 
     try {
-      const { display_name, position, email, image_url } = d
+      const { display_name, position, email, image_url } = data;
+
       const { error } = await supabase.auth.updateUser({
         email,
-        data: {
-          display_name, position, email, image_url
-        }
-      })
+        data: { display_name, position, email, image_url },
+      });
+
+      if (error) throw error;
+
       setUser({
         ...user,
-        email,
-        user_metadata: {
-          display_name, position, email
-        }
-      })
-      return toast.success('Profile saved successfully!');
-    } catch (error) {
+        email: email ?? user.email,
+        user_metadata: { display_name, position, email },
+      });
+
+      toast.success('Profile saved successfully!');
+    } catch {
       toast.error('Sorry, something wrong happened. Please try again.');
-      throw error;
+      redirect('/auth/login');
     }
   };
 
@@ -43,11 +49,14 @@ function AppWrapper({ children }: {
     const fetchCurrentUser = async () => {
       try {
         setLoading(true);
-        const { data } = await supabase.auth.getUser()
-        if (data && data.user) {
-          setUser(data.user)
-        };
-      } catch (error) {
+        const { data, error } = await supabase.auth.getUser();
+
+        if (error) throw error;
+
+        if (data?.user) setUser(data.user);
+      } catch {
+        toast.error('Sorry, something wrong happened. Please try again.');
+        redirect('/auth/login');
       } finally {
         setLoading(false);
       }
@@ -56,29 +65,32 @@ function AppWrapper({ children }: {
     fetchCurrentUser();
   }, []);
 
-  if (loading) return <div className='h-screen w-full flex items-center justify-center'>
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"><path strokeDasharray="16" strokeDashoffset="16" d="M12 3c4.97 0 9 4.03 9 9"><animate fill="freeze" attributeName="strokeDashoffset" dur="0.3s" values="16;0" /><animateTransform attributeName="transform" dur="1.5s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12" /></path><path strokeDasharray="64" strokeDashoffset="64" strokeOpacity=".3" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9Z"><animate fill="freeze" attributeName="strokeDashoffset" dur="1.2s" values="64;0" /></path></g></svg>
-  </div>
-
-  if (!user) return <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-    <div className="w-full max-w-sm">
-      <LoginForm />
-    </div>
-  </div>
+  if (loading)
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center">
+        <Loading />
+      </div>
+    );
 
   return (
-    <AppContext.Provider value={{
-      user,
-      saveUser,
-      setUser
-    }}>
+    <AppContext.Provider
+      value={{
+        user,
+        saveUser,
+        setUser,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
 }
 
 export function useAppContext() {
-  return useContext(AppContext);
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within an AppWrapper');
+  }
+  return context;
 }
 
 export default AppWrapper;

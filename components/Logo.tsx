@@ -27,10 +27,10 @@ const Logo: React.FC<LogoProps> = ({
       {hasError ? (
         <div
           style={{ width: size, height: size }}
-          className="bg-black rounded flex items-center justify-centers"
+          className="bg-black rounded-lg flex items-center justify-centers"
           aria-label={alt}
         >
-          <h2 className='text-white text-center mx-auto'>G</h2>
+          <p className='text-white font-[700] text-center mx-auto'>G</p>
         </div>
       ) : (
         <Image
