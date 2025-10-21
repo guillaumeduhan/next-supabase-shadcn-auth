@@ -1,4 +1,4 @@
-# Next.js Supabase Shadcn Auth 2025
+# Next.js Supabase Shadcn Auth 2025 by @codewithg
 
 A modern authentication starter built with **Next.js 15**, **Supabase**, and **Shadcn UI**. Perfect for adding secure, production-ready auth to any Next.js application with minimal setup.
 

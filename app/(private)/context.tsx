@@ -41,7 +41,6 @@ function AppWrapper({ children }: { children: ReactNode }) {
       toast.success('Profile saved successfully!');
     } catch {
       toast.error('Sorry, something wrong happened. Please try again.');
-      redirect('/auth/login');
     }
   };
 
@@ -56,7 +55,6 @@ function AppWrapper({ children }: { children: ReactNode }) {
         if (data?.user) setUser(data.user);
       } catch {
         toast.error('Sorry, something wrong happened. Please try again.');
-        redirect('/auth/login');
       } finally {
         setLoading(false);
       }
@@ -65,12 +63,11 @@ function AppWrapper({ children }: { children: ReactNode }) {
     fetchCurrentUser();
   }, []);
 
-  if (loading)
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center">
-        <Loading />
-      </div>
-    );
+  if (loading) return <div className="min-h-screen w-full flex items-center justify-center">
+    <Loading />
+  </div>;
+
+  if (!user) redirect('/auth/login');
 
   return (
     <AppContext.Provider
